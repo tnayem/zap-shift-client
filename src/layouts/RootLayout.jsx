@@ -5,14 +5,16 @@ import Footer from '../Pages/shared/Footer';
 
 const RootLayout = () => {
     return (
-        <div>
+        <div className='bg-[#eaeced]'>
             <header className='w-11/12 mx-auto'>
-                <Navbar></Navbar>
+                <div className='py-5'>
+                    <Navbar></Navbar>
+                </div>
             </header>
             <main className='w-11/12 mx-auto'>
                 <Outlet></Outlet>
             </main>
-            <footer>
+            <footer className='w-11/12 mx-auto'>
                 <Footer></Footer>
             </footer>
 
