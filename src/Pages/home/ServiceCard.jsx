@@ -1,8 +1,9 @@
 import React from "react";
 
-const ServiceCard = ({ icon: Icon, title, description }) => {
+const ServiceCard = ({service}) => {
+    const { icon: Icon, title, description } = service
   return (
-    <div className="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 p-6 text-center">
+    <div className="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 p-6 text-center hover:bg-[#caeb66]">
       <div className="flex justify-center mb-4">
         <Icon className="text-4xl text-primary" />
       </div>

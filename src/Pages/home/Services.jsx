@@ -1,12 +1,11 @@
 import React from "react";
 import ServiceCard from "./ServiceCard";
+import { FaGlobeAsia,FaUndo } from "react-icons/fa";
 import {
   FaTruckFast,
-  FaGlobeAsia,
   FaWarehouse,
   FaMoneyBillWave,
   FaBuilding,
-  FaUndo,
 } from "react-icons/fa6";
 
 const services = [
@@ -62,7 +61,7 @@ const Services = () => {
         {/* Service Cards Grid */}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, index) => (
-            <ServiceCard key={index} {...service} />
+            <ServiceCard key={index} service={service} />
           ))}
         </div>
       </div>
