@@ -11,7 +11,7 @@ import Marquee from 'react-fast-marquee';
 const logos = [company1, company2, company3, company4, company5, company6, company7]
 const ClientSlider = () => {
     return (
-        <section className="py-16 bg-base-200 overflow-hidden">
+        <section className="py-16 bg-base-200 overflow-hidden my-10 rounded-xl">
             <div className="container mx-auto px-4 text-center">
                 <h2 className="text-xl font-semibold mb-4"> We've helped thousands of sales teams</h2>
 

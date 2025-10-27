@@ -27,7 +27,7 @@ const services = [
 ];
 const OurServices = () => {
     return (
-        <section className="bg-base-200 py-16">
+        <section className="bg-base-200 py-16 my-10 rounded-xl">
             <div className="container mx-auto px-4">
 
                 <div className="space-y-8">
@@ -37,7 +37,7 @@ const OurServices = () => {
                             className="flex flex-col md:flex-row items-center bg-base-100 shadow-sm rounded-2xl p-6 hover:shadow-md transition-shadow duration-300"
                         >
                             {/* Left side icon */}
-                            <div className="md:w-1/4 flex justify-center border-r-2 border-dotted border-gray-400">
+                            <div className="md:w-1/4 flex justify-center lg:border-r-2 lg:border-dotted lg:border-gray-400">
                                 <img
                                     src={service.icon}
                                     alt={service.title}
