@@ -20,7 +20,7 @@ const Navbar = () => {
                         {navItems}
                     </ul>
                 </div>
-                <a className="btn btn-ghost text-xl"><Link to="/"><ProFastLogo></ProFastLogo></Link></a>
+                <Link className="btn btn-ghost text-xl" to="/"><ProFastLogo></ProFastLogo></Link>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
