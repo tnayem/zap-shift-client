@@ -1,12 +1,24 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router';
 import ProFastLogo from './ProFastLogo';
+import useInfo from '../../hooks/useInfo';
 
 const Navbar = () => {
     const navItems = <>
     <li><NavLink to="/">Home</NavLink></li>
     <li><NavLink to="/about">About</NavLink></li>
+    <li><NavLink className=' bg-[#caeb66] rounded-xl'>Be a rider</NavLink></li>
     </>
+    const {user,logOut} = useInfo()
+    const handleLogOut=()=>{
+        logOut()
+        .then(result=>{
+            console.log(result.user);
+        })
+        .catch(error=>{
+            console.log(error);
+        })
+    }
     return (
         <div className="navbar bg-[#FFFFFF] rounded-xl">
             <div className="navbar-start">
@@ -28,7 +40,12 @@ const Navbar = () => {
                 </ul>
             </div>
             <div className="navbar-end">
-                <Link className='btn bg-[#caeb66] rounded-xl'>Be a rider</Link>
+                {
+                 user?<><Link onClick={handleLogOut} className='btn bg-[#caeb66] rounded-xl'>Log Out</Link></>  
+                 :
+                 <><Link to="/login" className='btn bg-[#caeb66] rounded-xl'>Login</Link></>
+                }
+                
             </div>
         </div>
     );

@@ -1,9 +1,11 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { AuthContext } from '../../context/AuthContext';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
 const Login = () => {
+    const location = useLocation()
+    console.log(location);
 
     const { register, handleSubmit, formState: { errors } } = useForm()
 
@@ -32,7 +34,7 @@ const Login = () => {
                         errors.password?.type === "pattern" && <p className='text-red-500'>Password must be at least 6 characters and one uppercase,one lowercase</p>
                     }
                     <div><a className="link link-hover">Forgot password?</a></div>
-                    <button className="btn bg-[#caeb66] my-4">Login</button>
+                    <button state={location.pathname} className="btn bg-[#caeb66] my-4">Login</button>
 
                 </fieldset>
 
