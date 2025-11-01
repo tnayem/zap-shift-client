@@ -7,10 +7,10 @@ const PrivateRouts = ({children}) => {
     console.log(location);
     const {user,loading} = useInfo()
     if(loading){
-        return <span className="loading loading-bars loading-xl"></span>
+        return <div className='flex items-center justify-center h-screen'><span className="loading loading-bars loading-xl"></span></div>
     }
     if(!user){
-        return <Navigate to="/login"></Navigate>
+        return <Navigate state={location.pathname} to="/login"></Navigate>
     }
     return children;
 };
