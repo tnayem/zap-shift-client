@@ -15,10 +15,11 @@ const Register = () => {
             .then(result => {
                 console.log(result.user);
                 // navigate(`${location.state} || '/`)
-                if (location.pathname === "/register" || location.state === null) {
-                    return navigate("/")
-                }
-                navigate(`${location.state}` || "/")
+                // if (location.state === null) {
+                //     return navigate("/")
+                // }
+                // navigate(`${location.state}` || "/")
+                navigate(location.state? location.state :"/")
 
             })
             .catch(error => {
