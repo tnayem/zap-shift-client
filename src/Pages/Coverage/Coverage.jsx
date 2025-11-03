@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+// ✅ Replace this with your full district JSON data
+import districtData from "./../../data/warehouses.json";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -26,9 +28,6 @@ const MapZoomHandler = ({ selectedDistrict }) => {
 
   return null;
 };
-
-// ✅ Replace this with your full district JSON data
-import districtData from "./../../../public/warehouses.json";
 
 const Coverage = () => {
   const [search, setSearch] = useState("");
