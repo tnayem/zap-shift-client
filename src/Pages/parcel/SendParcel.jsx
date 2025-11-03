@@ -1,77 +1,88 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import wareHouseData from "../../data/warehouses.json";
+import Swal from "sweetalert2";
 
 const SendParcel = () => {
   const { register, handleSubmit, watch, reset } = useForm();
 
-  // Get unique regions from warehouse data
   const regions = [...new Set(wareHouseData.map((w) => w.region))];
 
-  // Watch dynamic form values
+  // Watch parcel type and weight dynamically
   const parcelType = watch("parcelType") || "Document";
   const parcelWeight = parseFloat(watch("parcelWeight")) || 0;
+
+  // Watch selected regions and districts for dynamic dropdowns
   const senderRegion = watch("senderRegion");
   const receiverRegion = watch("receiverRegion");
-  const senderDistrict = watch("senderDistrict");
-  const receiverDistrict = watch("receiverDistrict");
+  const senderDistrict =
+    wareHouseData.find((w) => w.region === senderRegion)?.district || "";
+  const receiverDistrict =
+    wareHouseData.find((w) => w.region === receiverRegion)?.district || "";
 
-  // Get districts dynamically
-  const senderDistricts =
-    wareHouseData
-      .filter((w) => w.region === senderRegion)
-      .map((w) => w.district) || [];
-  const receiverDistricts =
-    wareHouseData
-      .filter((w) => w.region === receiverRegion)
-      .map((w) => w.district) || [];
-
-  // 📌 Cost calculation function (no if-else)
-  const calculateCost = (type, weight, senderDist, receiverDist) => {
+  // Cost calculation function
+  const calculateCostDetails = (type, weight, senderDist, receiverDist) => {
     const sameDistrict = senderDist === receiverDist;
     const docCost = sameDistrict ? 60 : 80;
     const ndBase = sameDistrict ? 100 : 120;
-    const extraWeightCharge = weight > 3 ? (weight - 3) * 20 : 0;
-    return type === "Document" ? docCost : ndBase + extraWeightCharge;
+    const extraWeight = weight > 3 ? weight - 3 : 0;
+    const extraCharge = extraWeight * 20;
+
+    const baseCost = type === "Document" ? docCost : ndBase;
+    const totalCost = baseCost + (type === "Non-Document" ? extraCharge : 0);
+
+    return {
+      sameDistrict,
+      type,
+      weight,
+      baseCost,
+      extraWeight,
+      extraCharge,
+      totalCost,
+    };
   };
 
-  const totalCost = calculateCost(parcelType, parcelWeight, senderDistrict, receiverDistrict);
-
   const onSubmit = (data) => {
-    toast((t) => (
-      <div className="flex flex-col gap-3">
-        <span className="font-semibold">Confirm Booking?</span>
-        <span className="text-success font-medium">
-          💰 Total Cost: ৳{totalCost.toFixed(2)}
-        </span>
-        <div className="flex justify-center gap-3 mt-2">
-          <button
-            className="btn btn-success btn-sm"
-            onClick={() => {
-              toast.dismiss(t.id);
-              toast.success(
-                `✅ Booking Confirmed! Total Cost: ৳${totalCost.toFixed(2)}`,
-                { duration: 500 }
-              );
-              console.log("Confirmed Data:", { ...data, totalCost });
-              reset();
-            }}
-          >
-            Yes
-          </button>
-          <button
-            className="btn btn-error btn-sm"
-            onClick={() => {
-              toast.dismiss(t.id);
-              toast.error("❌ Booking Cancelled");
-            }}
-          >
-            No
-          </button>
-        </div>
-      </div>
-    ));
+    const details = calculateCostDetails(
+      parcelType,
+      parcelWeight,
+      senderDistrict,
+      receiverDistrict
+    );
+
+    Swal.fire({
+      title: "Confirm Booking?",
+      html: `
+        <strong>Parcel Type:</strong> ${details.type} <br/>
+        <strong>Same District:</strong> ${details.sameDistrict ? "Yes" : "No"} <br/>
+        <strong>Base Cost:</strong> ৳${details.baseCost} <br/>
+        ${
+          details.type === "Non-Document" && details.extraWeight > 0
+            ? `<strong>Extra Weight:</strong> ${details.extraWeight} kg × 20 = ৳${details.extraCharge} <br/>`
+            : ""
+        }
+        <strong>Total Cost:</strong> ৳${details.totalCost}
+      `,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Confirm",
+      cancelButtonText: "No, Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire(
+          "Booked!",
+          `✅ Booking Confirmed! Total Cost: ৳${details.totalCost}`,
+          "success"
+        );
+        console.log("Confirmed Data:", {
+          ...data,
+          totalCost: details.totalCost,
+        });
+        reset();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire("Cancelled", "❌ Booking Cancelled", "error");
+      }
+    });
   };
 
   return (
@@ -125,7 +136,13 @@ const SendParcel = () => {
 
         {/* Live Cost Display */}
         <div className="text-right text-lg font-semibold text-success">
-          Total Cost: ৳{totalCost.toFixed(2)}
+          Total Cost: ৳
+          {calculateCostDetails(
+            parcelType,
+            parcelWeight,
+            senderDistrict,
+            receiverDistrict
+          ).totalCost.toFixed(2)}
         </div>
 
         <hr className="my-4" />
@@ -170,11 +187,7 @@ const SendParcel = () => {
                 className="select select-bordered w-full"
               >
                 <option value="">Select your district</option>
-                {senderDistricts.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
+                {senderDistrict && <option value={senderDistrict}>{senderDistrict}</option>}
               </select>
               <textarea
                 placeholder="Pickup Instruction"
@@ -222,11 +235,7 @@ const SendParcel = () => {
                 className="select select-bordered w-full"
               >
                 <option value="">Select receiver district</option>
-                {receiverDistricts.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
+                {receiverDistrict && <option value={receiverDistrict}>{receiverDistrict}</option>}
               </select>
               <textarea
                 placeholder="Delivery Instruction"
@@ -237,6 +246,7 @@ const SendParcel = () => {
           </div>
         </div>
 
+        {/* Footer */}
         <p className="text-sm text-gray-500 mt-4">
           * PickUp Time 4pm–7pm Approx.
         </p>
