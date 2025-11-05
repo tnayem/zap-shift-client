@@ -2,12 +2,16 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import wareHouseData from "../../data/warehouses.json";
 import Swal from "sweetalert2";
+import useInfo from "../../hooks/useInfo";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const SendParcel = () => {
   const { register, handleSubmit, watch, reset } = useForm();
+  const axiosSecure = useAxiosSecure()
 
   const regions = [...new Set(wareHouseData.map((w) => w.region))];
-
+  // User 
+  const { user } = useInfo()
   // Watch parcel type and weight dynamically
   const parcelType = watch("parcelType") || "Document";
   const parcelWeight = parseFloat(watch("parcelWeight")) || 0;
@@ -56,10 +60,9 @@ const SendParcel = () => {
         <strong>Parcel Type:</strong> ${details.type} <br/>
         <strong>Same District:</strong> ${details.sameDistrict ? "Yes" : "No"} <br/>
         <strong>Base Cost:</strong> ৳${details.baseCost} <br/>
-        ${
-          details.type === "Non-Document" && details.extraWeight > 0
-            ? `<strong>Extra Weight:</strong> ${details.extraWeight} kg × 20 = ৳${details.extraCharge} <br/>`
-            : ""
+        ${details.type === "Non-Document" && details.extraWeight > 0
+          ? `<strong>Extra Weight:</strong> ${details.extraWeight} kg × 20 = ৳${details.extraCharge} <br/>`
+          : ""
         }
         <strong>Total Cost:</strong> ৳${details.totalCost}
       `,
@@ -68,16 +71,30 @@ const SendParcel = () => {
       confirmButtonText: "Yes, Confirm",
       cancelButtonText: "No, Cancel",
     }).then((result) => {
+      const parcelData = {
+        ...data,
+        totalCost: details.totalCost,
+        created_by: user?.email,
+        date: new Date().toISOString().split("T")[0],
+        traking_id: Date.now(),
+      }
       if (result.isConfirmed) {
-        Swal.fire(
-          "Booked!",
-          `✅ Booking Confirmed! Total Cost: ৳${details.totalCost}`,
-          "success"
-        );
-        console.log("Confirmed Data:", {
-          ...data,
-          totalCost: details.totalCost,
-        });
+        // console.log("Confirmed Data:", parcelData);
+        // Save data to the server
+        axiosSecure.post('parcels', parcelData)
+          .then(result => {
+            console.log(result.data);
+            if (result.data.insertedId) {
+              Swal.fire(
+                "Booked!",
+                `✅ Booking Confirmed! Total Cost: ৳${details.totalCost}`,
+                "success"
+              );
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          })
         reset();
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire("Cancelled", "❌ Booking Cancelled", "error");

@@ -4,22 +4,28 @@ import ProFastLogo from './ProFastLogo';
 import useInfo from '../../hooks/useInfo';
 
 const Navbar = () => {
+    const { user, logOut } = useInfo()
     const navItems = <>
-    <li><NavLink to="/">Home</NavLink></li>
-    <li><NavLink to="/sendParcel">Send Parcel</NavLink></li>
-    <li><NavLink to="/coverage">Coverage</NavLink></li>
-    <li><NavLink to="/about">About</NavLink></li>
-    <li><NavLink className=' bg-[#caeb66] rounded-xl'>Be a rider</NavLink></li>
+        <li><NavLink to="/">Home</NavLink></li>
+        <li><NavLink to="/sendParcel">Send Parcel</NavLink></li>
+        <li><NavLink to="/coverage">Coverage</NavLink></li>
+        {
+            user && <>
+                <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+            </>
+        }
+        <li><NavLink to="/about">About</NavLink></li>
+        <li><NavLink className=' bg-[#caeb66] rounded-xl'>Be a rider</NavLink></li>
     </>
-    const {user,logOut} = useInfo()
-    const handleLogOut=()=>{
+    
+    const handleLogOut = () => {
         logOut()
-        .then(result=>{
-            console.log(result.user);
-        })
-        .catch(error=>{
-            console.log(error);
-        })
+            .then(result => {
+                console.log(result.user);
+            })
+            .catch(error => {
+                console.log(error);
+            })
     }
     return (
         <div className="navbar bg-[#FFFFFF] rounded-xl">
@@ -43,11 +49,11 @@ const Navbar = () => {
             </div>
             <div className="navbar-end">
                 {
-                 user?<><Link onClick={handleLogOut} className='btn bg-[#caeb66] rounded-xl'>Log Out</Link></>  
-                 :
-                 <><Link to="/login" className='btn bg-[#caeb66] rounded-xl'>Login</Link></>
+                    user ? <><Link onClick={handleLogOut} className='btn bg-[#caeb66] rounded-xl'>Log Out</Link></>
+                        :
+                        <><Link to="/login" className='btn bg-[#caeb66] rounded-xl'>Login</Link></>
                 }
-                
+
             </div>
         </div>
     );

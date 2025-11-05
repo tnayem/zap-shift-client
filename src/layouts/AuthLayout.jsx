@@ -6,7 +6,7 @@ import ProFastLogo from '../Pages/shared/ProFastLogo';
 const AuthLayout = () => {
     return (
         <div className="bg-base-200 w-11/12 mx-auto py-12">
-            <Link to="/"><ProFastLogo></ProFastLogo></Link>
+            <ProFastLogo></ProFastLogo>
             <div className="hero-content flex-col lg:flex-row">
                 <div className='flex-1'>
                     <Outlet></Outlet>
