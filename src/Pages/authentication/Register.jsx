@@ -13,13 +13,14 @@ const Register = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
     const onSubmit = async(data) => {
         const { email, password, image, name } = data;
-        const file = (image[0]);
+        
         createUser(email, password)
             .then(async(result) => {
                 // Navigate
                 navigate(location.state ? location.state : "/")
                 const user=result.user;
                 // Hosting Image
+                const file = (image[0]);
                 const formData = new FormData()
                 formData.append("image", file);
                 const res = await axios.post(`https://api.imgbb.com/1/upload?key=${imgbb_api_key}`,formData)
