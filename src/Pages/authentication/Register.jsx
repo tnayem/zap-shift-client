@@ -2,24 +2,38 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import useInfo from '../../hooks/useInfo';
 import { Link, useLocation, useNavigate } from 'react-router';
+import axios from 'axios';
+import { updateProfile } from 'firebase/auth';
 
+const imgbb_api_key = import.meta.env.VITE_IMGBB_API_KEY;
 const Register = () => {
     const { createUser, googleSignUp } = useInfo()
     const location = useLocation()
     const navigate = useNavigate()
-    console.log(location);
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const onSubmit = (data) => {
-        const { email, password } = data;
+    const onSubmit = async(data) => {
+        const { email, password, image, name } = data;
+        const file = (image[0]);
         createUser(email, password)
-            .then(result => {
-                console.log(result.user);
-                // navigate(`${location.state} || '/`)
-                // if (location.state === null) {
-                //     return navigate("/")
-                // }
-                // navigate(`${location.state}` || "/")
-                navigate(location.state? location.state :"/")
+            .then(async(result) => {
+                // Navigate
+                navigate(location.state ? location.state : "/")
+                const user=result.user;
+                // Hosting Image
+                const formData = new FormData()
+                formData.append("image", file);
+                const res = await axios.post(`https://api.imgbb.com/1/upload?key=${imgbb_api_key}`,formData)
+                const photoURL = res.data.data.display_url;
+               const displayName =name;
+               // update user 
+               updateProfile(user,{photoURL,displayName})
+               .then(()=>{
+                console.log("Profile Update Success");
+               })
+               .catch(error=>{
+                console.log(error);
+               })
+                
 
             })
             .catch(error => {
@@ -51,6 +65,14 @@ const Register = () => {
                         {
                             errors?.name?.type === "required" && <p className='text-red-500'>This field is required</p>
                         }
+                        <label className="label">Profile Photo</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            {...register("image", { required: true })}
+                            className="file-input file-input-bordered w-full"
+                        />
+                        {errors?.image && <p className="text-red-500">Please upload a photo</p>}
                         <label className="label">Email</label>
                         <input type="email" {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })} className="input w-full" placeholder="Email" />
                         {

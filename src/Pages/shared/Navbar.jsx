@@ -21,7 +21,7 @@ const Navbar = () => {
     const handleLogOut = () => {
         logOut()
             .then(result => {
-                console.log(result.user);
+                console.log(result?.user);
             })
             .catch(error => {
                 console.log(error);
@@ -40,7 +40,8 @@ const Navbar = () => {
                         {navItems}
                     </ul>
                 </div>
-                <Link className="btn btn-ghost text-xl" to="/"><ProFastLogo></ProFastLogo></Link>
+                {/* <Link className="btn btn-ghost text-xl"></Link> */}
+                <ProFastLogo className="text-xl"></ProFastLogo>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
